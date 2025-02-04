@@ -16,7 +16,6 @@ from graphs import (
     create_telemetry_graphs,
     create_ticket_priority_chart,
 )
-from queries import get_fleet_averages, get_telemetry_data, get_ticketing_history
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4().hex)
