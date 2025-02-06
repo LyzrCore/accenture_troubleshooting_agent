@@ -204,14 +204,19 @@ def chat_with_agent(user_id, agent_id, session_id, message):
         }
     )
     st.header("DEBUGGING: Telemetry Analysis")
+    st.writ("Message:")
     st.write(message)
+    st.write("User ID:")
     st.write(user_id)
+    st.write("Agent ID:")
     st.write(agent_id)
+    st.write("Session ID:")
     st.write(session_id)
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
         response.raise_for_status()
-        st.write(session_id.json())
+        st.write("Response:")
+        st.write(response.json())
         return response.json()
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
