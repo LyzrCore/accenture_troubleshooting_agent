@@ -19,8 +19,8 @@ from knowledge_graph import extract_steps_from_kg
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4().hex)
-    print("Session ID:")
-    print(st.session_state.session_id)
+    st.header("Session ID:")
+    st.header(st.session_state.session_id)
 
 
 # Streamlit UI
@@ -97,7 +97,7 @@ def main():
                     st.plotly_chart(comparison_fig)
 
                 telemetry_analysis = generate_telemetry_analysis(
-                    st.session_state.session_id,
+                    "33f7bdd5-e988-445b-b014-412217ffb94a",
                     issue_desc,
                     telemetry_df,
                     fleet_averages,

@@ -83,13 +83,6 @@ def generate_telemetry_analysis(session_id, issue_desc, telemetry_df, fleet_aver
         + "\nIssue Description: "
         + issue_desc
     )
-    print("PRE ANALYSIS")
-    print("Message: ")
-    print(message)
-    print("Session ID: ")
-    print(session_id)
-    print("Agent ID: ")
-    print(settings.TELEMETRY_AGENT_ID)
     telemetry_anlysis_agent_output = chat_with_agent(
         user_id="default",
         agent_id=settings.TELEMETRY_AGENT_ID,
