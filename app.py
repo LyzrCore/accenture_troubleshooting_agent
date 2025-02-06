@@ -305,7 +305,7 @@ def generate_ticket_history_analysis(session_id, issue_desc, ticket_df):
 
 def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
     if not image_path:
-        image_path = "data/shutterstock_1667846680-scaled.jpg"
+        image_path = os.path.join(BASE_DIR, "data/shutterstock_1667846680-scaled.jpg")
     st.header("Image path:")
     st.write(image_path)
     corrosion_analysis_file_path = detect_corrosion(image_path)
@@ -357,7 +357,7 @@ def analyse_knowledge_graph_data(session_id, prompt):
 
 def analyse_handwritten_data(session_id, issue_desc, image_path=None):
     if not image_path:
-        image_path = "data/handwritten.jpg"
+        image_path = os.path.join(BASE_DIR, "data/handwritten.jpg")
 
     handwritten_text = extract_text(image_path)
     if handwritten_text:
