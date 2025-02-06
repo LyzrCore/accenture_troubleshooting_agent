@@ -34,11 +34,13 @@
 #     except Exception as e:
 #         print(f"An error occurred: {e}")
 import os
+
 import requests
+
 from settings import settings
 
 # Get the OCR URL from environment variables or settings
-ocr_url = os.getenv("OCR_ENDPOINT", settings.OCR_ENDPOINT)
+ocr_url = settings.OCR_ENDPOINT
 
 
 def detect_corrosion(file_path):
@@ -53,7 +55,7 @@ def detect_corrosion(file_path):
     headers = {"accept": "*/*"}
 
     if not os.path.isfile(file_path):
-        return (f"Error: File '{file_path}' not found.")
+        return f"Error: File '{file_path}' not found."
 
     try:
         # Open the image file in binary mode
