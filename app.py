@@ -3,9 +3,10 @@ import uuid
 import pandas as pd
 import streamlit as st
 
-from agent import (  # generate_telemetry_analysis,
+from agent import (
     analyse_handwritten_data,
     generate_corrosion_analysis,
+    generate_telemetry_analysis,
     generate_ticket_history_analysis,
     troubleshoot_issue,
 )
@@ -176,78 +177,6 @@ def main():
 
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
-
-
-#### TO REMOVE
-import json
-
-import requests
-
-from settings import settings
-
-base_url = settings.AGENT_STUDIO_CHAT_URL
-
-
-def chat_with_agent(user_id, agent_id, session_id, message):
-    url = base_url
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": settings.LYZR_API_KEY,
-    }
-
-    payload = json.dumps(
-        {
-            "user_id": user_id,
-            "agent_id": agent_id,
-            "session_id": session_id,
-            "message": message,
-        }
-    )
-    st.header("DEBUGGING: Telemetry Analysis")
-    st.write("Message:")
-    st.write(message)
-    st.write("User ID:")
-    st.write(user_id)
-    st.write("Agent ID:")
-    st.write(agent_id)
-    st.write("Session ID:")
-    st.write(session_id)
-    try:
-        response = requests.request("POST", url, headers=headers, data=payload)
-        response.raise_for_status()
-        st.write("Response:")
-        st.write(response.json())
-        return response.json()
-    except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-        return None
-    except Exception as err:
-        print(f"Other error occurred: {err}")
-        return None
-
-
-def generate_telemetry_analysis(session_id, issue_desc, telemetry_df, fleet_averages):
-    message = (
-        "Telemetry Data: "
-        + str(telemetry_df)
-        + "\nFleet Averages: "
-        + str(fleet_averages)
-        + "\nIssue Description: "
-        + issue_desc
-    )
-
-    telemetry_anlysis_agent_output = chat_with_agent(
-        user_id="default",
-        agent_id=settings.TELEMETRY_AGENT_ID,
-        session_id=session_id,
-        message=message,
-    )
-
-    if telemetry_anlysis_agent_output:
-        final_output = telemetry_anlysis_agent_output["response"]
-        return final_output
-    else:
-        return "Error: Unable to analyze telemetry data."
 
 
 if __name__ == "__main__":
