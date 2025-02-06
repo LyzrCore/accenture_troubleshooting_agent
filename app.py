@@ -303,7 +303,11 @@ def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
         image_path = "data/shutterstock_1667846680-scaled.jpg"
 
     corrosion_analysis_file_path = detect_corrosion(image_path)
+    st.header("Corrosion Detection:")
+    st.write(corrosion_analysis_file_path)
     corrosion_text = extract_text(corrosion_analysis_file_path)
+    st.header("Corrosion Text:")
+    st.write(corrosion_text)
 
     input_message = (
         "Corrosion Analysis: "
