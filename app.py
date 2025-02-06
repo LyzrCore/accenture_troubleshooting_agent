@@ -204,7 +204,7 @@ def chat_with_agent(user_id, agent_id, session_id, message):
         }
     )
     st.header("DEBUGGING: Telemetry Analysis")
-    st.writ("Message:")
+    st.write("Message:")
     st.write(message)
     st.write("User ID:")
     st.write(user_id)
