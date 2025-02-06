@@ -1,7 +1,10 @@
+import os
 import uuid
 
 import pandas as pd
 import streamlit as st
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # from agent import (
 #     analyse_handwritten_data,
@@ -30,16 +33,18 @@ def main():
 
     # Corrosion image
     corrosion_uploaded_image = st.file_uploader("Corrosion image:", type=["jpg", "png"])
+    CORROSION_FILE_PATH = os.path.join(BASE_DIR, "data/corrosion_upload.jpg")
     if corrosion_uploaded_image:
-        with open(f"data/corrosion_upload.jpg", "wb") as f:
+        with open(CORROSION_FILE_PATH, "wb") as f:
             f.write(corrosion_uploaded_image.read())
 
     # Handwriting Image
     handwriting_uploaded_image = st.file_uploader(
         "Handwriting image:", type=["jpg", "png"]
     )
+    HANDWRITTEN_FILE_PATH = os.path.join(BASE_DIR, "data/handwritten_upload.jpg")
     if handwriting_uploaded_image:
-        with open(f"data/handwriting_upload.jpg", "wb") as f:
+        with open(HANDWRITTEN_FILE_PATH, "wb") as f:
             f.write(handwriting_uploaded_image.read())
 
     if st.button("Troubleshoot"):
@@ -105,12 +110,11 @@ def main():
                 st.write("No telemetry data found for this VIN")
 
             # st.header("Step 2: Vision Inspection Data")
-            # final_image_path, corrosion_analysis_result = generate_corrosion_analysis(
-            #     st.session_state.session_id, issue_desc, "data/corrosion_upload.jpg"
-            # )
-            # st.image(final_image_path)
-            # st.write(corrosion_analysis_result)
-            corrosion_analysis_result = ""
+            final_image_path, corrosion_analysis_result = generate_corrosion_analysis(
+                st.session_state.session_id, issue_desc, CORROSION_FILE_PATH
+            )
+            st.image(final_image_path)
+            st.write(corrosion_analysis_result)
 
             # Get ticket history
             st.header("Step 3: Ticket History")
@@ -153,7 +157,7 @@ def main():
                 analyse_handwritten_data(
                     st.session_state.session_id,
                     issue_desc,
-                    "data/handwriting_upload.jpg",
+                    HANDWRITTEN_FILE_PATH,
                 )
             )
             st.image(image_path)
@@ -177,6 +181,7 @@ def main():
 
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 
 # TO REMOVE
 import json
@@ -301,10 +306,12 @@ def generate_ticket_history_analysis(session_id, issue_desc, ticket_df):
 def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
     if not image_path:
         image_path = "data/shutterstock_1667846680-scaled.jpg"
-
+    st.header("Image path:")
+    st.write(image_path)
     corrosion_analysis_file_path = detect_corrosion(image_path)
     st.header("Corrosion Detection:")
     st.write(corrosion_analysis_file_path)
+    st.image(corrosion_analysis_file_path)
     corrosion_text = extract_text(corrosion_analysis_file_path)
     st.header("Corrosion Text:")
     st.write(corrosion_text)
@@ -370,6 +377,7 @@ def analyse_handwritten_data(session_id, issue_desc, image_path=None):
     #     "**Analysis of Handwritten Maintenance Notes**\n\n**Issue Description:**\nThe machine appears to be in stable condition with no visible signs of external damage. However, the red indicator light suggests the machine is currently offline or in standby mode.\n\n**Handwritten Text:**\n1. The machine is stable, no visible external damage noted.\n2. Red indicator light indicates machine offline or in standby mode.\n3. Surroundings are cluttered with debris and obstructions.\n4. No signs of tampering or unauthorized access observed.\n5. Ambient conditions are relatively high which may impact machine performance.\n6. Wind speed is moderate.\n7. Recommendations for action:\n   - **Immediate Action**: Investigate the cause of the red light and bring the machine back online safely.\n   - **Maintenance Check**: Conduct a maintenance inspection to address efficiency issues and energy loss.\n   - **Environmental Monitoring**: Implement cooling measures to mitigate the impact of high ambient temperatures.\n   - **Operational Review**: Analyze historical data to identify patterns in energy loss.\n8. Unusual vibrations or noises from the motor have been noted.\n\n**Key Findings:**\n- The machine shows signs of operational issues indicated by the red light, despite its stable physical condition.\n- The presence of debris suggests possible operational hazards that could affect performance.\n- Environmental factors, particularly high ambient temperatures, may adversely impact machine efficiency and performance.\n- Unusual vibrations or noises from the motor indicate a potential underlying problem requiring immediate attention.\n\n**Critical Insights:**\n- The handwritten notes highlight concerns about both operational efficacy and environmental conditions, which are not detailed in the formal issue description.\n- The cluttered surroundings raise alarms about safety and potential impacts on machinery operation.\n- The urgency indicated in the recommendations suggests that delayed action could exacerbate current inefficiencies.\n\n**Conflicts/Discrepancies:**\n- While the formal description does not mention the environmental conditions or the clutter around the machine, these factors could significantly impact maintenance and operational strategy.\n- The unusual noises mentioned do not appear in the formal description, hinting at additional insights from field personnel that require further exploration.\n\n**Patterns/Recurring Themes:**\n- Maintenance checks and environmental considerations are recurring themes, suggesting a history of similar issues in this context.\n- Energy loss appears to be a persistent issue based on the recommendation for operational review.\n\n**Contextual Understanding:**\n- The level of expertise and experience of field personnel is apparent in their identification of both immediate and systemic issues.\n- The notes demonstrate a comprehensive understanding of the operational environment affecting machine performance.\n\n**Effectiveness of Documented Actions:**\n- Recommendations for immediate action and maintenance checks indicate a proactive approach to managing both current machine status and potential future hazards.\n- Implementing environmental monitoring measures is crucial, given the noted high ambient temperatures.\n\n**Areas Needing Further Investigation:**\n- Detailed investigation into the cause of the red indicator light to determine if it is linked to the motor's unusual vibrations or operational inefficiencies.\n- Further assessment of the work environment to address clutter which may impact machine functionality and safety protocols.",
     #     "data/handwritten.jpg",
     # )
+
 
 import json
 import re
@@ -626,7 +634,6 @@ def extract_steps_from_kg(
         machine_name, issue_desc, session_id
     )
     return results[:3]
-
 
 
 if __name__ == "__main__":
