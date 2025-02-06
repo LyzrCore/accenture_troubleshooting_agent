@@ -19,6 +19,8 @@ from knowledge_graph import extract_steps_from_kg
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4().hex)
+    print("Session ID:")
+    print(st.session_state.session_id)
 
 
 # Streamlit UI
