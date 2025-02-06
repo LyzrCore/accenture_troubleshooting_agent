@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from agent import (
     analyse_handwritten_data,
-    # generate_corrosion_analysis,
+    generate_corrosion_analysis,
     generate_telemetry_analysis,
     generate_ticket_history_analysis,
     troubleshoot_issue,
@@ -33,20 +33,18 @@ def main():
     issue_desc = st.text_area("Explain the issue:")
 
     # Corrosion image
-    # corrosion_uploaded_image = st.file_uploader("Corrosion image:", type=["jpg", "png"])
-    # CORROSION_FILE_PATH = os.path.join(BASE_DIR, "data/corrosion_upload.jpg")
-    # if corrosion_uploaded_image:
-    #     with open(CORROSION_FILE_PATH, "wb") as f:
-    #         f.write(corrosion_uploaded_image.read())
+    corrosion_uploaded_image = st.file_uploader("Corrosion image:", type=["jpg", "png"])
+    if corrosion_uploaded_image:
+        with open(f"data/corrosion_upload.jpg", "wb") as f:
+            f.write(corrosion_uploaded_image.read())
 
     # Handwriting Image
-    # handwriting_uploaded_image = st.file_uploader(
-    #     "Handwriting image:", type=["jpg", "png"]
-    # )
-    # HANDWRITTEN_FILE_PATH = os.path.join(BASE_DIR, "data/handwritten_upload.jpg")
-    # if handwriting_uploaded_image:
-    #     with open(HANDWRITTEN_FILE_PATH, "wb") as f:
-    #         f.write(handwriting_uploaded_image.read())
+    handwriting_uploaded_image = st.file_uploader(
+        "Handwriting image:", type=["jpg", "png"]
+    )
+    if handwriting_uploaded_image:
+        with open(f"data/handwriting_upload.jpg", "wb") as f:
+            f.write(handwriting_uploaded_image.read())
 
     if st.button("Troubleshoot"):
         if not vin:
@@ -112,14 +110,13 @@ def main():
 
             # st.header("Step 2: Vision Inspection Data")
             final_image_path, corrosion_analysis_result = generate_corrosion_analysis(
-                st.session_state.session_id, issue_desc
+                st.session_state.session_id, issue_desc, "data/corrosion_upload.jpg"
             )
             st.image(final_image_path)
             st.write(corrosion_analysis_result)
 
             # Get ticket history
             st.header("Step 3: Ticket History")
-            # ticket_df = get_ticketing_history(engine, vin)
             ticket_df = pd.read_csv("data/POC Ticketing Data_augmented.csv")
             # filter the ticket_df by vin (column name is VinNumber)
             ticket_df = ticket_df[ticket_df["VinNumber"] == vin]
@@ -144,9 +141,6 @@ def main():
                 st.write("No ticket history found for this VIN")
 
             st.header("Step 4: Knowledge Graph Data")
-            # kg_analysis_output = generate_knowledge_graph_analysis(
-            #     st.session_state.session_id, vin, issue_desc
-            # )
             kg_analysis_output = extract_steps_from_kg(
                 st.session_state.session_id, issue_desc
             )
@@ -158,6 +152,7 @@ def main():
                 analyse_handwritten_data(
                     st.session_state.session_id,
                     issue_desc,
+                    "data/handwriting_upload.jpg",
                 )
             )
             st.image(image_path)
@@ -222,39 +217,38 @@ def chat_with_agent(user_id, agent_id, session_id, message):
         return None
 
 
+# def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
+#     if not image_path:
+#         image_path = os.path.join(BASE_DIR, "data/shutterstock_1667846680-scaled.jpg")
+#     st.header("Image path:")
+#     st.write(image_path)
+#     st.image(image_path)
+#     corrosion_analysis_file_path = detect_corrosion(image_path)
+#     st.header("Corrosion Detection:")
+#     st.write(corrosion_analysis_file_path)
+#     st.image(corrosion_analysis_file_path)
+#     corrosion_text = extract_text(corrosion_analysis_file_path)
+#     st.header("Corrosion Text:")
+#     st.write(corrosion_text)
 
-def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
-    if not image_path:
-        image_path = os.path.join(BASE_DIR, "data/shutterstock_1667846680-scaled.jpg")
-    st.header("Image path:")
-    st.write(image_path)
-    st.image(image_path)
-    corrosion_analysis_file_path = detect_corrosion(image_path)
-    st.header("Corrosion Detection:")
-    st.write(corrosion_analysis_file_path)
-    st.image(corrosion_analysis_file_path)
-    corrosion_text = extract_text(corrosion_analysis_file_path)
-    st.header("Corrosion Text:")
-    st.write(corrosion_text)
-
-    input_message = (
-        "Corrosion Analysis: "
-        + str(corrosion_text)
-        + "\nIssue Description: "
-        + str(issue_desc)
-    )
-    if corrosion_text:
-        corrosion_analysis = chat_with_agent(
-            user_id="default",
-            agent_id=settings.CORROSION_AGENT_ID,
-            session_id=session_id,
-            message=input_message,
-        )
-    if corrosion_analysis:
-        final_output = corrosion_analysis["response"]
-        return corrosion_analysis_file_path, final_output
-    else:
-        return "Error: Unable to process image"
+#     input_message = (
+#         "Corrosion Analysis: "
+#         + str(corrosion_text)
+#         + "\nIssue Description: "
+#         + str(issue_desc)
+#     )
+#     if corrosion_text:
+#         corrosion_analysis = chat_with_agent(
+#             user_id="default",
+#             agent_id=settings.CORROSION_AGENT_ID,
+#             session_id=session_id,
+#             message=input_message,
+#         )
+#     if corrosion_analysis:
+#         final_output = corrosion_analysis["response"]
+#         return corrosion_analysis_file_path, final_output
+#     else:
+#         return "Error: Unable to process image"
 
 
 # def analyse_knowledge_graph_data(session_id, prompt):
