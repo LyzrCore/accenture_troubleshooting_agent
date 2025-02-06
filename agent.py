@@ -118,34 +118,34 @@ def generate_ticket_history_analysis(session_id, issue_desc, ticket_df):
 
 
 def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
-    # if not image_path:
-    #     image_path = "data/shutterstock_1667846680-scaled.jpg"
+    if not image_path:
+        image_path = "data/shutterstock_1667846680-scaled.jpg"
 
-    # corrosion_analysis_file_path = detect_corrosion(image_path)
-    # corrosion_text = extract_text(corrosion_analysis_file_path)
+    corrosion_analysis_file_path = detect_corrosion(image_path)
+    corrosion_text = extract_text(corrosion_analysis_file_path)
 
-    # input_message = (
-    #     "Corrosion Analysis: "
-    #     + str(corrosion_text)
-    #     + "\nIssue Description: "
-    #     + str(issue_desc)
-    # )
-    # if corrosion_text:
-    #     corrosion_analysis = chat_with_agent(
-    #         user_id="default",
-    #         agent_id=settings.CORROSION_AGENT_ID,
-    #         session_id=session_id,
-    #         message=input_message,
-    #     )
-    # if corrosion_analysis:
-    #     final_output = corrosion_analysis["response"]
-    #     return corrosion_analysis_file_path, final_output
-    # else:
-    #     return "Error: Unable to process image"
-    return (
-        "detected_corrosion.png",
-        "### Corrosion Metrics Assessment\n\n1. **Atmospheric Corrosion Level: 58.58%**\n   - **Severity:** Moderate\n   - **Potential Causes:** The elevated atmospheric corrosion suggests exposure to environmental factors such as humidity, temperature fluctuations, or industrial pollutants. These conditions can lead to the breakdown of protective coatings and subsequent corrosion.\n   - **Monitoring/Mitigation Strategies:** Implement regular inspections to monitor the corrosion progression, and consider applying anti-corrosive coatings after cleaning the affected areas.\n\n2. **Crevice Corrosion Level: 29.11%**\n   - **Severity:** Low\n   - **Potential Causes:** This lower level indicates minor issues, possibly due to water or contaminants being trapped in crevices without sufficient ventilation. It may not be a current concern but warrants attention in future maintenance.\n   - **Monitoring/Mitigation Strategies:** Ensure crevices are cleaned regularly and consider redesigning any components that may trap debris or water.\n\n3. **Pitting Corrosion Level: 12.51%**\n   - **Severity:** Low\n   - **Potential Causes:** The minimal presence of pitting suggests localized corrosion, likely resulting from localized attacks due to poor water drainage or absence of protective barrier in specific areas.\n   - **Monitoring/Mitigation Strategies:** Regular inspections focusing on points where water can accumulate, along with routine cleaning, can help mitigate this issue.\n\n4. **Degradation Index: 46.82%**\n   - **Severity:** Moderate\n   - **Overview:** This index reflects an overall moderate level of degradation which may indicate that while corrosion is not yet critical, it needs to be monitored closely to prevent escalation.\n   - **Monitoring/Mitigation Strategies:** Develop a schedule for more frequent assessments and timely maintenance interventions to address any emerging corrosion.\n\n### Correlation Analysis\nThe presence of moderate atmospheric corrosion may be contributing to the unusual vibrations or noises from the motor. Corrosion can affect tightness in joints and fasteners leading to mechanical looseness, resulting in operational anomalies like vibrations. Additionally, while crevice and pitting corrosion levels are low, they could also be localized factors contributing to wear and tear in critical components, possibly amplifying operational noise due to improper fitment or alignment.\n\n### Overall Assessment\nThe machine exhibits moderate corrosion levels with specific areas of concern that may affect its operation. It is essential to address these issues proactively to ensure safe and efficient functioning.\n\n### Recommendations\n1. **Immediate Action:** Schedule an inspection to determine if the noises and vibrations are directly linked to the corrosion metrics. Focus particularly on joints, fasteners, and areas with atmospheric exposure.\n   \n2. **Routine Maintenance:** Develop a maintenance plan that includes regular inspection intervals and cleaning protocols to mitigate atmospheric and crevice corrosion.\n\n3. **Urgency for Intervention:** The maintenance priority should be set as medium. If issues are not addressed, the machine's performance could degrade further, leading to potential operational failures or safety hazards.\n\n4. **Long-Term Strategy:** Consider investing in more advanced corrosion-resistance materials or coatings when refurbishing or replacing components to enhance durability against atmospheric elements.\n\nFailure to adequately address these corrosion-related issues could escalate into critical failures, increasing downtime and maintenance costs while potentially risking safety.",
+    input_message = (
+        "Corrosion Analysis: "
+        + str(corrosion_text)
+        + "\nIssue Description: "
+        + str(issue_desc)
     )
+    if corrosion_text:
+        corrosion_analysis = chat_with_agent(
+            user_id="default",
+            agent_id=settings.CORROSION_AGENT_ID,
+            session_id=session_id,
+            message=input_message,
+        )
+    if corrosion_analysis:
+        final_output = corrosion_analysis["response"]
+        return corrosion_analysis_file_path, final_output
+    else:
+        return "Error: Unable to process image"
+    # return (
+    #     "detected_corrosion.png",
+    #     "### Corrosion Metrics Assessment\n\n1. **Atmospheric Corrosion Level: 58.58%**\n   - **Severity:** Moderate\n   - **Potential Causes:** The elevated atmospheric corrosion suggests exposure to environmental factors such as humidity, temperature fluctuations, or industrial pollutants. These conditions can lead to the breakdown of protective coatings and subsequent corrosion.\n   - **Monitoring/Mitigation Strategies:** Implement regular inspections to monitor the corrosion progression, and consider applying anti-corrosive coatings after cleaning the affected areas.\n\n2. **Crevice Corrosion Level: 29.11%**\n   - **Severity:** Low\n   - **Potential Causes:** This lower level indicates minor issues, possibly due to water or contaminants being trapped in crevices without sufficient ventilation. It may not be a current concern but warrants attention in future maintenance.\n   - **Monitoring/Mitigation Strategies:** Ensure crevices are cleaned regularly and consider redesigning any components that may trap debris or water.\n\n3. **Pitting Corrosion Level: 12.51%**\n   - **Severity:** Low\n   - **Potential Causes:** The minimal presence of pitting suggests localized corrosion, likely resulting from localized attacks due to poor water drainage or absence of protective barrier in specific areas.\n   - **Monitoring/Mitigation Strategies:** Regular inspections focusing on points where water can accumulate, along with routine cleaning, can help mitigate this issue.\n\n4. **Degradation Index: 46.82%**\n   - **Severity:** Moderate\n   - **Overview:** This index reflects an overall moderate level of degradation which may indicate that while corrosion is not yet critical, it needs to be monitored closely to prevent escalation.\n   - **Monitoring/Mitigation Strategies:** Develop a schedule for more frequent assessments and timely maintenance interventions to address any emerging corrosion.\n\n### Correlation Analysis\nThe presence of moderate atmospheric corrosion may be contributing to the unusual vibrations or noises from the motor. Corrosion can affect tightness in joints and fasteners leading to mechanical looseness, resulting in operational anomalies like vibrations. Additionally, while crevice and pitting corrosion levels are low, they could also be localized factors contributing to wear and tear in critical components, possibly amplifying operational noise due to improper fitment or alignment.\n\n### Overall Assessment\nThe machine exhibits moderate corrosion levels with specific areas of concern that may affect its operation. It is essential to address these issues proactively to ensure safe and efficient functioning.\n\n### Recommendations\n1. **Immediate Action:** Schedule an inspection to determine if the noises and vibrations are directly linked to the corrosion metrics. Focus particularly on joints, fasteners, and areas with atmospheric exposure.\n   \n2. **Routine Maintenance:** Develop a maintenance plan that includes regular inspection intervals and cleaning protocols to mitigate atmospheric and crevice corrosion.\n\n3. **Urgency for Intervention:** The maintenance priority should be set as medium. If issues are not addressed, the machine's performance could degrade further, leading to potential operational failures or safety hazards.\n\n4. **Long-Term Strategy:** Consider investing in more advanced corrosion-resistance materials or coatings when refurbishing or replacing components to enhance durability against atmospheric elements.\n\nFailure to adequately address these corrosion-related issues could escalate into critical failures, increasing downtime and maintenance costs while potentially risking safety.",
+    # )
 
 
 def analyse_knowledge_graph_data(session_id, prompt):

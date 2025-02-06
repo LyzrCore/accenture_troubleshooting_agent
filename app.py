@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from agent import (
     analyse_handwritten_data,
-    generate_corrosion_analysis,
+    # generate_corrosion_analysis,
     generate_telemetry_analysis,
     generate_ticket_history_analysis,
     troubleshoot_issue,
@@ -184,153 +184,77 @@ def main():
 
 
 # TO REMOVE
-# import json
+import json
 
-# import requests
+import requests
 
-# from corrosion_detection import detect_corrosion
-# from ocr_extraction import extract_text
-# from settings import settings
+from corrosion_detection import detect_corrosion
+from ocr_extraction import extract_text
+from settings import settings
 
-# base_url = settings.AGENT_STUDIO_CHAT_URL
-
-
-# def chat_with_agent(user_id, agent_id, session_id, message):
-#     url = base_url
-#     headers = {
-#         "Content-Type": "application/json",
-#         "x-api-key": settings.LYZR_API_KEY,
-#     }
-
-#     payload = json.dumps(
-#         {
-#             "user_id": user_id,
-#             "agent_id": agent_id,
-#             "session_id": session_id,
-#             "message": message,
-#         }
-#     )
-#     try:
-#         response = requests.request("POST", url, headers=headers, data=payload)
-#         response.raise_for_status()
-#         return response.json()
-#     except requests.exceptions.HTTPError as http_err:
-#         print(f"HTTP error occurred: {http_err}")
-#         return None
-#     except Exception as err:
-#         print(f"Other error occurred: {err}")
-#         return None
+base_url = settings.AGENT_STUDIO_CHAT_URL
 
 
-# def troubleshoot_issue(
-#     session_id,
-#     issue_desc,
-#     telemetry_analysis,
-#     corrosion_analysis_result,
-#     ticket_analysis,
-#     kg_analysis_output,
-#     handwritten_analysis,
-# ):
-#     message = (
-#         "Issue Description: "
-#         + issue_desc
-#         + "\nTelemetry Analysis: "
-#         + telemetry_analysis
-#         + "\nCorrosion Analysis: "
-#         + corrosion_analysis_result
-#         + "\nTicket Analysis: "
-#         + ticket_analysis
-#         + "\nHandwritten Analysis: "
-#         + handwritten_analysis
-#         + "\nKnowledge Graph Analysis: "
-#         + str(kg_analysis_output)
-#     )
+def chat_with_agent(user_id, agent_id, session_id, message):
+    url = base_url
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": settings.LYZR_API_KEY,
+    }
 
-#     troubleshooting_agent_output = chat_with_agent(
-#         user_id="default",
-#         agent_id=settings.TROUBLESHOOTING_AGENT_ID,
-#         session_id=session_id,
-#         message=message,
-#     )
-
-#     if troubleshooting_agent_output:
-#         final_output = troubleshooting_agent_output["response"]
-#         return final_output
-#     else:
-#         return "Error: Unable to troubleshoot."
+    payload = json.dumps(
+        {
+            "user_id": user_id,
+            "agent_id": agent_id,
+            "session_id": session_id,
+            "message": message,
+        }
+    )
+    try:
+        response = requests.request("POST", url, headers=headers, data=payload)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        return None
+    except Exception as err:
+        print(f"Other error occurred: {err}")
+        return None
 
 
-# def generate_telemetry_analysis(session_id, issue_desc, telemetry_df, fleet_averages):
-#     message = (
-#         "Telemetry Data: "
-#         + str(telemetry_df)
-#         + "\nFleet Averages: "
-#         + str(fleet_averages)
-#         + "\nIssue Description: "
-#         + issue_desc
-#     )
-#     telemetry_anlysis_agent_output = chat_with_agent(
-#         user_id="default",
-#         agent_id=settings.TELEMETRY_AGENT_ID,
-#         session_id=session_id,
-#         message=message,
-#     )
 
-#     if telemetry_anlysis_agent_output:
-#         final_output = telemetry_anlysis_agent_output["response"]
-#         return final_output
-#     else:
-#         return "Error: Unable to analyze telemetry data."
+def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
+    if not image_path:
+        image_path = os.path.join(BASE_DIR, "data/shutterstock_1667846680-scaled.jpg")
+    st.header("Image path:")
+    st.write(image_path)
+    st.image(image_path)
+    corrosion_analysis_file_path = detect_corrosion(image_path)
+    st.header("Corrosion Detection:")
+    st.write(corrosion_analysis_file_path)
+    st.image(corrosion_analysis_file_path)
+    corrosion_text = extract_text(corrosion_analysis_file_path)
+    st.header("Corrosion Text:")
+    st.write(corrosion_text)
 
-
-# def generate_ticket_history_analysis(session_id, issue_desc, ticket_df):
-#     message = "Ticket History: " + str(ticket_df) + "\nIssue Description: " + issue_desc
-
-#     ticket_analysis_agent_output = chat_with_agent(
-#         user_id="default",
-#         agent_id=settings.TICKET_AGENT_ID,
-#         session_id=session_id,
-#         message=message,
-#     )
-
-#     if ticket_analysis_agent_output:
-#         final_output = ticket_analysis_agent_output["response"]
-#         return final_output
-#     else:
-#         return "Error: Unable to analyze ticket history."
-
-
-# def generate_corrosion_analysis(session_id, issue_desc, image_path=None):
-#     if not image_path:
-#         image_path = os.path.join(BASE_DIR, "data/shutterstock_1667846680-scaled.jpg")
-#     st.header("Image path:")
-#     st.write(image_path)
-#     corrosion_analysis_file_path = detect_corrosion(image_path)
-#     st.header("Corrosion Detection:")
-#     st.write(corrosion_analysis_file_path)
-#     st.image(corrosion_analysis_file_path)
-#     corrosion_text = extract_text(corrosion_analysis_file_path)
-#     st.header("Corrosion Text:")
-#     st.write(corrosion_text)
-
-#     input_message = (
-#         "Corrosion Analysis: "
-#         + str(corrosion_text)
-#         + "\nIssue Description: "
-#         + str(issue_desc)
-#     )
-#     if corrosion_text:
-#         corrosion_analysis = chat_with_agent(
-#             user_id="default",
-#             agent_id=settings.CORROSION_AGENT_ID,
-#             session_id=session_id,
-#             message=input_message,
-#         )
-#     if corrosion_analysis:
-#         final_output = corrosion_analysis["response"]
-#         return corrosion_analysis_file_path, final_output
-#     else:
-#         return "Error: Unable to process image"
+    input_message = (
+        "Corrosion Analysis: "
+        + str(corrosion_text)
+        + "\nIssue Description: "
+        + str(issue_desc)
+    )
+    if corrosion_text:
+        corrosion_analysis = chat_with_agent(
+            user_id="default",
+            agent_id=settings.CORROSION_AGENT_ID,
+            session_id=session_id,
+            message=input_message,
+        )
+    if corrosion_analysis:
+        final_output = corrosion_analysis["response"]
+        return corrosion_analysis_file_path, final_output
+    else:
+        return "Error: Unable to process image"
 
 
 # def analyse_knowledge_graph_data(session_id, prompt):
