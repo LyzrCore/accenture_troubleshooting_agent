@@ -7,7 +7,7 @@ ocr_url = settings.OCR_ENDPOINT
 
 def detect_corrosion(file_path):
     url = ocr_url + "detect_corrosion"
-    params = {"mode": "both"}
+    params = {"mode": "detection"}
     headers = {"accept": "*/*"}
 
     # Open the file in binary mode

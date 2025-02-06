@@ -6,7 +6,6 @@ import streamlit as st
 from agent import (
     analyse_handwritten_data,
     generate_corrosion_analysis,
-    generate_knowledge_graph_analysis,
     generate_telemetry_analysis,
     generate_ticket_history_analysis,
     troubleshoot_issue,
@@ -16,6 +15,7 @@ from graphs import (
     create_telemetry_graphs,
     create_ticket_priority_chart,
 )
+from knowledge_graph import extract_steps_from_kg
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4().hex)
@@ -28,6 +28,20 @@ def main():
     # Input VIN
     vin = st.text_input("Enter VIN Number:")
     issue_desc = st.text_area("Explain the issue:")
+
+    # Corrosion image
+    corrosion_uploaded_image = st.file_uploader("Corrosion image:", type=["jpg", "png"])
+    if corrosion_uploaded_image:
+        with open(f"data/corrosion_upload.jpg", "wb") as f:
+            f.write(corrosion_uploaded_image.read())
+
+    # Handwriting Image
+    handwriting_uploaded_image = st.file_uploader(
+        "Handwriting image:", type=["jpg", "png"]
+    )
+    if handwriting_uploaded_image:
+        with open(f"data/handwriting_upload.jpg", "wb") as f:
+            f.write(handwriting_uploaded_image.read())
 
     if st.button("Troubleshoot"):
         if not vin:
@@ -92,9 +106,8 @@ def main():
                 st.write("No telemetry data found for this VIN")
 
             st.header("Step 2: Vision Inspection Data")
-
             final_image_path, corrosion_analysis_result = generate_corrosion_analysis(
-                st.session_state.session_id, issue_desc
+                st.session_state.session_id, issue_desc, "data/corrosion_upload.jpg"
             )
             st.image(final_image_path)
             st.write(corrosion_analysis_result)
@@ -126,31 +139,41 @@ def main():
                 st.write("No ticket history found for this VIN")
 
             st.header("Step 4: Knowledge Graph Data")
-            st.write("This step is disabled for now.")
-            # latest_telemetry, machine_history, kg_analysis_output = (
-            #     generate_knowledge_graph_analysis(
-            #         st.session_state.session_id, vin, issue_desc
-            #     )
+            # kg_analysis_output = generate_knowledge_graph_analysis(
+            #     st.session_state.session_id, vin, issue_desc
             # )
-            # # Print the analysis output
-            # st.write(kg_analysis_output)
+            kg_analysis_output = extract_steps_from_kg(
+                st.session_state.session_id, issue_desc
+            )
+            # Print the analysis output
+            st.write(kg_analysis_output)
 
             st.header("Step 5: Handwritten data analysis")
             handwritten_text, handwritten_analysis, image_path = (
-                analyse_handwritten_data(st.session_state.session_id, issue_desc)
+                analyse_handwritten_data(
+                    st.session_state.session_id,
+                    issue_desc,
+                    "data/handwriting_upload.jpg",
+                )
             )
             st.image(image_path)
             st.write(handwritten_analysis)
 
-            # # Troubleshoot
-            # if issue_desc:
-            #     st.header("Solution: Next best actions")
-            #     troubleshooting_steps = troubleshoot_issue(
-            #         st.session_state.session_id, issue_desc
-            #     )
-            #     st.write(troubleshooting_steps)
-            # else:
-            #     print("Skipping agent call")
+            # Troubleshoot
+            if issue_desc:
+                st.header("Solution: Next best actions")
+                troubleshooting_steps = troubleshoot_issue(
+                    st.session_state.session_id,
+                    issue_desc,
+                    telemetry_analysis,
+                    corrosion_analysis_result,
+                    ticket_analysis,
+                    kg_analysis_output,
+                    handwritten_analysis,
+                )
+                st.write(troubleshooting_steps)
+            else:
+                print("Skipping agent call")
 
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
