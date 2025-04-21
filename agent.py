@@ -74,15 +74,8 @@ def troubleshoot_issue(
         return "Error: Unable to troubleshoot."
 
 
-def generate_telemetry_analysis(session_id, issue_desc, telemetry_df, fleet_averages):
-    message = (
-        "Telemetry Data: "
-        + str(telemetry_df)
-        + "\nFleet Averages: "
-        + str(fleet_averages)
-        + "\nIssue Description: "
-        + issue_desc
-    )
+def generate_telemetry_analysis(session_id, vin, issue_desc):
+    message = "Issue Description: " + issue_desc + "\nVIN: " + vin
     telemetry_anlysis_agent_output = chat_with_agent(
         user_id="default",
         agent_id=settings.TELEMETRY_AGENT_ID,
@@ -99,8 +92,8 @@ def generate_telemetry_analysis(session_id, issue_desc, telemetry_df, fleet_aver
     # return "[Performance Insights]\n- Working hours are 31.6% below the fleet average, indicating underutilization.\n- Fuel consumption rate is 39.5% above the fleet average, suggesting potential inefficiency.\n- Engine idle hours are slightly above the fleet average, which may indicate unnecessary idling.\n\n[System Health]\n- Notable anomaly: Unusual vibrations may indicate underlying mechanical issues, correlating with high fuel consumption.\n- Resource usage: Current fuel level at 21.5% signals potential need for refueling during operation.\n\n[Additional Context]\n- The significant increase in fuel consumption coincides with the onset of the reported vibrations.\n- Total machine hours are significantly lower than the fleet average, potentially impacting overall productivity."
 
 
-def generate_ticket_history_analysis(session_id, issue_desc, ticket_df):
-    message = "Ticket History: " + str(ticket_df) + "\nIssue Description: " + issue_desc
+def generate_ticket_history_analysis(session_id, issue_desc, vin):
+    message = "Issue Description: " + issue_desc + "\nVIN: " + vin
 
     ticket_analysis_agent_output = chat_with_agent(
         user_id="default",
@@ -185,3 +178,25 @@ def analyse_handwritten_data(session_id, issue_desc, image_path=None):
     #     "**Analysis of Handwritten Maintenance Notes**\n\n**Issue Description:**\nThe machine appears to be in stable condition with no visible signs of external damage. However, the red indicator light suggests the machine is currently offline or in standby mode.\n\n**Handwritten Text:**\n1. The machine is stable, no visible external damage noted.\n2. Red indicator light indicates machine offline or in standby mode.\n3. Surroundings are cluttered with debris and obstructions.\n4. No signs of tampering or unauthorized access observed.\n5. Ambient conditions are relatively high which may impact machine performance.\n6. Wind speed is moderate.\n7. Recommendations for action:\n   - **Immediate Action**: Investigate the cause of the red light and bring the machine back online safely.\n   - **Maintenance Check**: Conduct a maintenance inspection to address efficiency issues and energy loss.\n   - **Environmental Monitoring**: Implement cooling measures to mitigate the impact of high ambient temperatures.\n   - **Operational Review**: Analyze historical data to identify patterns in energy loss.\n8. Unusual vibrations or noises from the motor have been noted.\n\n**Key Findings:**\n- The machine shows signs of operational issues indicated by the red light, despite its stable physical condition.\n- The presence of debris suggests possible operational hazards that could affect performance.\n- Environmental factors, particularly high ambient temperatures, may adversely impact machine efficiency and performance.\n- Unusual vibrations or noises from the motor indicate a potential underlying problem requiring immediate attention.\n\n**Critical Insights:**\n- The handwritten notes highlight concerns about both operational efficacy and environmental conditions, which are not detailed in the formal issue description.\n- The cluttered surroundings raise alarms about safety and potential impacts on machinery operation.\n- The urgency indicated in the recommendations suggests that delayed action could exacerbate current inefficiencies.\n\n**Conflicts/Discrepancies:**\n- While the formal description does not mention the environmental conditions or the clutter around the machine, these factors could significantly impact maintenance and operational strategy.\n- The unusual noises mentioned do not appear in the formal description, hinting at additional insights from field personnel that require further exploration.\n\n**Patterns/Recurring Themes:**\n- Maintenance checks and environmental considerations are recurring themes, suggesting a history of similar issues in this context.\n- Energy loss appears to be a persistent issue based on the recommendation for operational review.\n\n**Contextual Understanding:**\n- The level of expertise and experience of field personnel is apparent in their identification of both immediate and systemic issues.\n- The notes demonstrate a comprehensive understanding of the operational environment affecting machine performance.\n\n**Effectiveness of Documented Actions:**\n- Recommendations for immediate action and maintenance checks indicate a proactive approach to managing both current machine status and potential future hazards.\n- Implementing environmental monitoring measures is crucial, given the noted high ambient temperatures.\n\n**Areas Needing Further Investigation:**\n- Detailed investigation into the cause of the red indicator light to determine if it is linked to the motor's unusual vibrations or operational inefficiencies.\n- Further assessment of the work environment to address clutter which may impact machine functionality and safety protocols.",
     #     "data/handwritten.jpg",
     # )
+
+
+def generate_manager_analysis(session_id, issue_desc, troubleshooting_steps, vin):
+    message = (
+        "Issue Description: "
+        + issue_desc
+        + "\nTroubleshooting Steps: "
+        + troubleshooting_steps
+        + "\nVIN: "
+        + vin
+    )
+    manager_analysis = chat_with_agent(
+        user_id="default",
+        agent_id=settings.MANAGER_AGENT_ID,
+        session_id=session_id,
+        message=message,
+    )
+    if manager_analysis:
+        final_output = manager_analysis["response"]
+        return final_output
+    else:
+        return "Error: Unable to process manager analysis"

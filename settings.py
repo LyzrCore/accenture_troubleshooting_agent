@@ -19,7 +19,7 @@ class Settings:
         self.OCR_AGENT_ID = os.getenv("OCR_AGENT_ID")
         self.KG_AGENT = os.getenv("KG_AGENT")
         self.CORROSION_AGENT_ID = os.getenv("CORROSION_AGENT_ID")
-
+        self.MANAGER_AGENT_ID = os.getenv("MANAGER_AGENT_ID")
         self.OCR_ENDPOINT = os.getenv("OCR_ENDPOINT")
 
     def __getattr__(self, name):
