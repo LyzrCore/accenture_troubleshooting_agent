@@ -16,7 +16,8 @@ from agent import (
 )
 
 if "session_id" not in st.session_state:
-    st.session_state.session_id = str(uuid.uuid4().hex)
+    st.session_state.session_id = "accenture_temp_session123"
+    st.write("Session ID:", st.session_state.session_id)
 
 
 # Streamlit UI
