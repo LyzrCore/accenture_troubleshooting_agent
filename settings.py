@@ -21,6 +21,8 @@ class Settings:
         self.CORROSION_AGENT_ID = os.getenv("CORROSION_AGENT_ID")
         self.MANAGER_AGENT_ID = os.getenv("MANAGER_AGENT_ID")
         self.OCR_ENDPOINT = os.getenv("OCR_ENDPOINT")
+        self.FEEDBACK_RAG_ID = os.getenv("FEEDBACK_RAG_ID")
+        self.AGENT_LEARNING_FEEDBACK_URL = os.getenv("AGENT_LEARNING_FEEDBACK_URL")
 
     def __getattr__(self, name):
         """Return None if attribute doesn't exist"""
